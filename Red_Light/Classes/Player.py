@@ -1,15 +1,14 @@
-from pybricks.parameters import Port
-from Controller import Controller
-from Conveyor import Conveyor
+from Classes.Controller import Controller
+from Classes.Conveyor import Conveyor
 
 class Player:
     
     startLives = 1
     
-    def __init__(self, sensorPort, motorPort):
+    def __init__(self, sensor, motor):
         self.__lives = Player.startLives
-        self.__controller = Controller(sensorPort)
-        self.__conveyor = Conveyor(motorPort)
+        self.__controller = Controller(sensor)
+        self.__conveyor = Conveyor(motor)
         
         self.alive = True
         self.moving = False
