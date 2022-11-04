@@ -1,10 +1,9 @@
 from pybricks.ev3devices import TouchSensor
-from pybricks.parameters import Port
 
 class Controller:
     
-    def __init__(self, sensorPort):
-        self.__sensor = TouchSensor(port=sensorPort)
+    def __init__(self, sensor):
+        self.__sensor = sensor
         self.pressed = False
         self.down = False
         self.up = False

@@ -1,6 +1,6 @@
 from pybricks.parameters import Port
-from Player import Player
-from Conveyor import Conveyor
+from Classes.Player import Player
+from Classes.Conveyor import Conveyor
 
 class GameSettings:
     
