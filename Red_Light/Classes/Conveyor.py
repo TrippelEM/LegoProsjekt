@@ -12,7 +12,6 @@ class Conveyor:
     
     def start(self):
         self.__motor.run(Conveyor.moveSpeed)
-        print(self.__motor.angle())
         
     def stop(self):
         self.__motor.stop()

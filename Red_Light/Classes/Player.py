@@ -1,6 +1,6 @@
 from pybricks.parameters import Port
-from Conveyor import Conveyor
 from Controller import Controller
+from Conveyor import Conveyor
 
 class Player:
     
