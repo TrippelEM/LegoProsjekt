@@ -14,15 +14,20 @@ ev3 = EV3Brick()
 
 p1Sensor = TouchSensor(Port.S1)
 p2Sensor = TouchSensor(Port.S4)
-p1Motor = Motor(port = Port.A, positive_direction = Direction.COUNTERCLOCKWISE)
-p2Motor = Motor(port = Port.D, positive_direction = Direction.COUNTERCLOCKWISE)
+robSensor = TouchSensor(Port.S2)
 
-settings = GameSettings(startLives = 1, moveSpeed = 30)
-gameManager = TestGameManager(p1Sensor, p2Sensor, p1Motor, p2Motor)
+p1Motor = Motor(port=Port.A, positive_direction=Direction.COUNTERCLOCKWISE, gears=[10, 10])
+p2Motor = Motor(port=Port.D, positive_direction=Direction.COUNTERCLOCKWISE, gears=[10, 10])
+robMotor = Motor(port=Port.C, positive_direction=Direction.CLOCKWISE)
+
+settings = GameSettings(startLives=2, moveSpeed=30)
+settings.applySettings()
+
+gameManager = GameManager(p1Sensor, p2Sensor, robSensor, p1Motor, p2Motor, robMotor)
 
 # Game
 ev3.speaker.beep()
-settings.applySettings()
+gameManager.startGame()
 
 while True:
     gameManager.updateGame()

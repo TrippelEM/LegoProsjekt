@@ -4,20 +4,28 @@ class Controller:
     
     def __init__(self, sensor):
         self.__sensor = sensor
-        self.pressed = False
-        self.down = False
-        self.up = False
+        self.__pressed = False
+        self.__down = False
+        self.__up = False
         
     def update(self):
-        
-        self.down = False
-        self.up = False
-        
+        self.__down = False
+        self.__up = False
+            
         if self.__sensor.pressed():
-            if not self.pressed:
-                self.down = True
-            self.pressed = True
+            if not self.__pressed:
+                self.__down = True
+            self.__pressed = True
         else:
-            if self.pressed:
+            if self.__pressed:
                 self.up = True
-            self.pressed = False
+            self.__pressed = False
+    
+    def pressed(self):
+        return self.__pressed
+    
+    def down(self):
+        return self.__down
+    
+    def up(self):
+        return self.__up
