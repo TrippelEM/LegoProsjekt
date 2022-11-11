@@ -10,4 +10,4 @@ class GameSettings:
         
     def applySettings(self):
         Player.startLives = self.__startLives
-        Conveyor.moveSpeed = self.__moveSpeed
+        Player.moveSpeed = self.__moveSpeed
