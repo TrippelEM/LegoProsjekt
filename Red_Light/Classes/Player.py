@@ -1,67 +1,63 @@
-from Classes.Controller import Controller
+from pybricks.parameters import Stop
+from Classes.AudioThread import AudioThread
 import time
 
 class Player:
+    
+    winAngle = 535
+    deathAngle = -240
     
     startLives = 1
     moveSpeed = 30
     
     def __init__(self, sensor, motor):
-        self.__controller = Controller(sensor)
-        self.__motor = motor
-        
-        self.__lives = Player.startLives
-        print(self.__lives)
-        self.__moveSpeed = Player.moveSpeed
-        
-        self.alive = True
-        self.moving = False
-        self.canMove = True
-        
-        self.previousTime = 0
-        self.waitTime = 0
+        self.sensor = sensor
+        self.motor = motor
     
     def start(self):
-        self.previousTime = time.time()
+        self.motor.reset_angle(0)
+        self.lives = Player.startLives
+        self.moveSpeed = Player.moveSpeed
+        self.moving = False
+        self.canMove = False
+        self.state = 0
     
     
     def update(self):
-        self.__controller.update()
-        
-        currentTime = time.time()
         
         if self.canMove:
-            if self.__controller.pressed():
+            if self.sensor.pressed():
                 self.moving = True
-                self.__motor.run(self.__moveSpeed)
+                self.motor.run(self.moveSpeed)
             else:
                 self.moving = False
-                self.__motor.hold()
+                self.motor.hold()
         else:
             self.moving = False
+            
+        if self.motor.angle() >= Player.winAngle:
+            self.canMove = False
+            self.state = 1
+        elif self.motor.angle() <= Player.deathAngle:
+            self.state = -2
+    
+    
+    def loseLife(self):
+        self.lives -= 1
+        if self.lives > 0:
+            self.reset()
+        else:
+            self.die()
         
-        if (currentTime - self.previousTime) >= self.waitTime:
-            self.canMove = True
-    
-    
-    def moveCheck(self):
-        if self.canMove:
-            if self.moving:
-                self.__lives -= 1
-                
-                if self.__lives > 0:
-                    self.reset()
-                else:
-                    self.die()
     
     def reset(self):
         self.canMove = False
-        self.previousTime = time.time()
-        self.waitTime = 2
-        self.__motor.run(-60)
+        self.motor.run_target(300, 0, then=Stop.HOLD, wait=False)
+        #AudioThread("Audio/Fail.wav")
+        
         
     def die(self):
+        self.state = -1
         self.canMove = False
-        self.previousTime = time.time()
-        self.waitTime = 2
-        self.__motor.run(-200)
+        self.motor.run_target(500, Player.deathAngle, then=Stop.HOLD, wait=False)
+        #AudioThread("Audio/Counting.wav", 0.2)

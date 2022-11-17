@@ -5,42 +5,48 @@ import time, random
 
 class GameManager:
     
-    def __init__(self, p1Sensor, p2Sensor, p1Motor, p2Motor, robMotor):
-        self.player1 = Player(p1Sensor, p1Motor)
-        self.player2 = Player(p2Sensor, p2Motor)
-        self.robot = Robot(robMotor)
-        
-        self.previousTime = 0
-        self.waitTime = 0
+    def __init__(self, robSensor, robMotor, p1Sensor, p1Motor, p2Sensor, p2Motor):
+        self.robot = Robot(robSensor, robMotor)
+        self.players = (Player(p1Sensor, p1Motor), Player(p2Sensor, p2Motor))
     
     def startGame(self):
-        #Start og snu hode
-        #Begynn å telle
-        #Set wait time til random
-        #Gjør det mulig for spillere å bevege seg        
-        print("Starting game")
-        self.previousTime = time.time()
-        self.waitTime = 5
+        self.winner = 0
         self.robot.start()
-        self.player1.start()
-        self.player2.start()
+        for player in self.players:
+            player.start()
+
+    def resetGame(self):
+        self.robot.reset()
+        for player in self.players:
+            player.reset()
         
     def updateGame(self):
         
-        #Set variabler
-        currentTime = time.time()
-        
-        #Spillere
-        self.player1.update()
-        self.player2.update()
-        
-        if self.robot.looking():
-            self.player1.moveCheck()
-            self.player2.moveCheck()
-        
-        #Robot
+        # Update robot
         self.robot.update()
+        
+        # Update players
+        for player in self.players:
+            player.update()
+        
+        # Check if robot is looking
+        if self.robot.looking:
             
-    
-    def resetGame(self):
-        print("Reset")
+            for player in self.players:
+                if player.moving:
+                    player.loseLife()
+        
+        
+        for player in self.players:
+            if player.state == 0 and self.robot.previousLooking and not self.robot.looking:
+                player.canMove = True
+            
+
+        if self.players[0].state == 1 and self.players[1].state == 1:
+            self.winner = 3
+        elif self.players[1].state == 1:
+            self.winner = 2
+        elif self.players[0].state == 1:
+            self.winner = 1
+        elif self.players[0].state == -2 and self.players[1].state == -2:
+            self.winner = -1
