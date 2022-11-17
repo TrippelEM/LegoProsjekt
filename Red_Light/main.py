@@ -7,27 +7,56 @@ from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 from Classes.GameSettings import GameSettings
 from Classes.GameManager import GameManager
-from Classes.TestGameManager import TestGameManager
+from Classes.AudioThread import AudioThread
 
-# Create objects
+# ---------- Create objects ---------- #
 ev3 = EV3Brick()
 
-p1Sensor = TouchSensor(Port.S1)
-p2Sensor = TouchSensor(Port.S4)
+# Robot
 robSensor = TouchSensor(Port.S2)
+robMotor = Motor(Port.C, Direction.CLOCKWISE)
 
-p1Motor = Motor(port=Port.A, positive_direction=Direction.COUNTERCLOCKWISE, gears=[10, 10])
-p2Motor = Motor(port=Port.D, positive_direction=Direction.COUNTERCLOCKWISE, gears=[10, 10])
-robMotor = Motor(port=Port.C, positive_direction=Direction.CLOCKWISE)
+# Player1
+p1Sensor = TouchSensor(Port.S1)
+p1Motor = Motor(Port.A, Direction.COUNTERCLOCKWISE) #gears=[10, 10]
 
-settings = GameSettings(startLives=2, moveSpeed=30)
+# Player2
+p2Sensor = TouchSensor(Port.S4)
+p2Motor = Motor(Port.D, Direction.COUNTERCLOCKWISE) #gears=[10, 10]
+
+# Litt usikker om skal være en class
+settings = GameSettings(startLives=1, moveSpeed=30)
 settings.applySettings()
 
-gameManager = GameManager(p1Sensor, p2Sensor, robSensor, p1Motor, p2Motor, robMotor)
+# Game Manager
+gameManager = GameManager(robSensor, robMotor, p1Sensor, p1Motor, p2Sensor, p2Motor)
 
-# Game
+# ---------- Game ---------- #
 ev3.speaker.beep()
-gameManager.startGame()
 
-while True:
-    gameManager.updateGame()
+finished = False
+while not finished:
+    
+    print("Menu")
+    ev3.speaker.play_file("Audio/Start.wav")
+    gameManager.startGame()
+    
+    # Game loop
+    while True:
+        gameManager.updateGame()
+        
+        if gameManager.winner != 0:
+            break
+    
+    # Show winner
+    if gameManager.winner == 3:
+        print("Both won")
+    elif gameManager.winner == 2:
+        print("Player2 won")
+    elif gameManager.winner == 1:
+        print("Player1 won")
+    else:
+        print("Both died")
+    
+    gameManager.resetGame()
+    wait(3000)
