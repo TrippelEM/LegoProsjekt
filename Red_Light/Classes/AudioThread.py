@@ -10,5 +10,11 @@ class AudioThread:
         
     def playAudioFile(self, soundFile, waitTime):
         time.sleep(waitTime)
-        ev3 = EV3Brick()
-        ev3.speaker.play_file(soundFile)
+        try:
+            print("Trying to play: " + soundFile)
+            ev3 = EV3Brick()
+            ev3.speaker.play_file(soundFile)
+        except:
+            print("Could not play: " + soundFile)
+        else:
+            print("Managed to play: " + soundFile)
