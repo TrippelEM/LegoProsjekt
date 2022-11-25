@@ -6,6 +6,7 @@ import time, random
 class Robot:
     
     turnSpeed = 300
+    turnTime = 0.4
     
     def __init__(self, sensor, motor):
         self.sensor = sensor
@@ -13,11 +14,12 @@ class Robot:
     
     def start(self):
         self.turnSpeed = Robot.turnSpeed
-        self.turnTime = 0.4
+        self.turnTime = Robot.turnTime
         
         self.motor.reset_angle(0)
         self.turning = False
-        self.looking = False
+        self.looking = True
+        
         self.previousLooking = True
         self.previousTime = time.time()
         self.waitTime = 0
@@ -35,13 +37,12 @@ class Robot:
                 if self.looking:
                     # Looking away
                     self.looking = False
-                    self.waitTime = 5
+                    self.waitTime = 5 + random.random() * 3
                     AudioThread("Audio/Counting.wav", 0)
                 else:
                     # Looking towards
-                    print("Looking")
                     self.looking = True
-                    self.waitTime = 5
+                    self.waitTime = 3 + random.random() * 3
             else:
                 self.turning = True
                 if self.looking:
@@ -52,9 +53,11 @@ class Robot:
                 else:
                     # Turning towards
                     self.turning = True
-                    self.motor.run_target(self.turnSpeed, 0, then=Stop.HOLD, wait=False)
+                    if self.turnTime == 0:
+                        self.motor.track_target(0)
+                    else:
+                        self.motor.run_target(self.turnSpeed, 0, then=Stop.HOLD, wait=False)
                     self.waitTime = self.turnTime
-                    AudioThread("Audio/Beep.wav", 0.01)
     
     def reset(self):
         self.motor.run_target(300, 0, then=Stop.HOLD, wait=False)

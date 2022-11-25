@@ -1,4 +1,3 @@
-from Classes.GameSettings import GameSettings 
 from Classes.Player import Player
 from Classes.Robot import Robot
 import time, random
@@ -36,12 +35,12 @@ class GameManager:
                 if player.moving:
                     player.loseLife()
         
-        
+        # Enable player movement if player is alive and robot is turning away
         for player in self.players:
             if player.state == 0 and self.robot.previousLooking and not self.robot.looking:
                 player.canMove = True
             
-
+        # Check player states and get winner
         if self.players[0].state == 1 and self.players[1].state == 1:
             self.winner = 3
         elif self.players[1].state == 1:

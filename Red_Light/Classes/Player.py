@@ -15,9 +15,10 @@ class Player:
         self.motor = motor
     
     def start(self):
-        self.motor.reset_angle(0)
         self.lives = Player.startLives
         self.moveSpeed = Player.moveSpeed
+        
+        self.motor.reset_angle(0)
         self.moving = False
         self.canMove = False
         self.state = 0
@@ -53,11 +54,10 @@ class Player:
     def reset(self):
         self.canMove = False
         self.motor.run_target(300, 0, then=Stop.HOLD, wait=False)
-        #AudioThread("Audio/Fail.wav")
         
         
     def die(self):
         self.state = -1
         self.canMove = False
-        self.motor.run_target(500, Player.deathAngle, then=Stop.HOLD, wait=False)
-        #AudioThread("Audio/Counting.wav", 0.2)
+        self.motor.track_target(Player.deathAngle)
+        AudioThread("Audio/Shot.wav", 0)
